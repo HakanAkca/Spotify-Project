@@ -1,11 +1,39 @@
 import base64 from 'react-native-base64'
+import * as AuthSession from 'expo-auth-session'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const url = "https://accounts.spotify.com/api"
-const client_id = ""
-const client_secret = ""
+const api_url = "https://api.spotify.com/v1"
+const url_autorize = "https://accounts.spotify.com"
+const client_id = "6ffe7e22c4cd429ea498bc16cddf1421"
+const client_secret = "e5253f51776541f88ecbd7ca8f569351"
 const base6Credentails = base64.encode(client_id + ':' + client_secret)
 
-export const getSpotifyToken = async () => {
+export const getAutorization = async () => {
+
+    let redirectUrl = AuthSession.getRedirectUrl('redirect')
+    let scopes = 'user-read-email user-library-read user-read-recently-played playlist-read-private user-top-read'
+    let results = await AuthSession.startAsync({
+        authUrl: `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirectUrl)}&scope=${encodeURIComponent(scopes)}&response_type=code`});
+
+    return results
+}
+
+
+export const me = async (token) => {
+    const userInfo = await fetch(`https://api.spotify.com/v1/me`, {
+        method: "GET",
+        headers: {
+        "Authorization": `Bearer ${token}`
+        }
+    });
+    return await userInfo.json()
+}  
+
+
+export const getSpotifyToken = async (code) => {
+    
+    let redirectUrl = AuthSession.getRedirectUrl('redirect')
     
     const request = await fetch(`${url}/token`, { 
         method: 'POST', 
@@ -13,12 +41,49 @@ export const getSpotifyToken = async () => {
             Authorization: `Basic ${base6Credentails}`,
             'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: 'grant_type=client_credentials'
-        
+        body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(redirectUrl)}`
     });
 
-    const json = await request.json()
-    const token = json
-    console.log(token)
-    return token
-}   
+    return await request.json()
+
+}  
+
+export const getUserTopArtists = async (token) => {   
+    const request = await fetch(`${api_url}/me/top/artists`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}
+
+export const getArtist = async (token, id) => {   
+    const request = await fetch(`${api_url}/artists/${id}`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}
+
+export const getArtistAlbums = async (token, id) => {   
+    const request = await fetch(`${api_url}/artists/${id}/albums`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}
+
+export const getAlbumsTracks = async (token, id) => {   
+    const request = await fetch(`${api_url}/albums/${id}/tracks`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}

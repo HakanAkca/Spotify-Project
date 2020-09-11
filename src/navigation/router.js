@@ -4,12 +4,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Icon } from 'react-native-elements'
+import AsyncStorage from '@react-native-community/async-storage'
+import moment from 'moment'
+import 'moment/min/moment-with-locales'
 
 import { AuthContext } from '../services/AuthContext'
-import { SignIn } from '../screen/auth/signIn'
-import Home from '../screen/board/home'
+import { SignIn } from '../screens/auth/signIn'
+import { Settings } from '../screens/board/settings'
+import { getAutorization, me, getSpotifyToken } from '../services/spotifyAPI'
 
-// const DistrictScreen = createStackNavigator();
+import Home from '../screens/board/home'
+import Details from '../screens/board/details'
+import Tracks from '../screens/board/albumsTracks'
 
 const AuthScreen = createStackNavigator();
 function AuthStack() {
@@ -27,7 +33,18 @@ function HomeStackScreen() {
     return (
         <HomeScreen.Navigator>
             <HomeScreen.Screen name="Home" component={Home} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Details" component={Details} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Tracks" component={Tracks} options={{ headerShown: false }} />
         </HomeScreen.Navigator>
+    )
+}
+
+const SettingsScreen = createStackNavigator();
+function SettingsStackScreen() {
+    return (
+        <SettingsScreen.Navigator>
+            <SettingsScreen.Screen name="Settings" component={Settings} options={{ headerShown: false }} />
+        </SettingsScreen.Navigator>
     )
 }
 
@@ -65,7 +82,7 @@ const TabsScreen = () => {
             />
             <Tab.Screen 
                 name="Bibliothèque" 
-                component={HomeStackScreen} 
+                component={SettingsStackScreen} 
                 options={{
                     tabBarIcon: ({ focused, color }) => {
                         return <Icon name={"book"} type={"material-comunity"} color={color} />;
@@ -80,7 +97,7 @@ const TabsScreen = () => {
 const isLoggedIn = false;
 const RootStack = createStackNavigator();
 
-const RootStackScreen = ({ userToken }) => {
+const RootStackScreen = ({userToken}) => {
 
     return (
         <RootStack.Navigator headerMode="none">
@@ -96,21 +113,39 @@ const RootStackScreen = ({ userToken }) => {
 }
 
 
-export const Router = () => {
-
-    const [userToken, setUserToken] = useState(null)
+export default class Router extends Component {
+    
+    constructor() {
+        super()
+        this.state = {
+            user_token: ''
+        }
+    }
 
     const authContext = useMemo(() => {
         return {
             signIn: () => {
-                setUserToken("test")
+                getAutorization().then(res => {
+                    if (res.type !== "success") { 
+                        console.log('nani')
+                    } else {
+                        getSpotifyToken(res.params.code).then(res => {
+                            const token = res.access_token
+                            const date = moment(new Date()).locale('fr').toString()
+
+                            setUserToken(res.access_token)
+                            AsyncStorage.multiSet([['token', token], ['date', date]]);
+                        })
+                    }
+                })
             },
             signOut: () => {
-                setUserToken(nul)
+                setUserToken(null)
+                AsyncStorage.removeItem('token')
             }
         }
     }, [])
-
+    render() {
     return (
         <AuthContext.Provider value={authContext}> 
             <NavigationContainer>
@@ -118,4 +153,5 @@ export const Router = () => {
             </NavigationContainer>
         </AuthContext.Provider>
     );
+    }
 }

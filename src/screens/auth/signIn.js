@@ -1,4 +1,4 @@
-import React, { Component, useContext } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Icon } from 'react-native-elements'
@@ -14,7 +14,7 @@ export const SignIn = ({ navigation }) =>  {
     <View styl={{ flex: 1 }}>
       <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
       <SafeAreaView style={{flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-        <View style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
+        <Animatable.View animation="pulse" easing="ease-out" iterationCount="infinite" style={{flex: 2, justifyContent: 'center', alignItems: 'center'}}>
           <Image 
             source={require('../../../assets/common/logo.png')} 
             style={{
@@ -23,7 +23,7 @@ export const SignIn = ({ navigation }) =>  {
               resizeMode: 'contain',
             }}  
           />
-        </View>
+        </Animatable.View>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'space-around'}}>
           <Button 
             title="S'INSCRIRE GRATUITEMENT" 

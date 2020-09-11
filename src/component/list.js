@@ -1,29 +1,37 @@
 import React, { Component } from 'react';
 import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, Icon } from 'react-native-elements'
-import * as Animatable from 'react-native-animatable'
 
-import { getSpotifyToken } from '../../services/spotifyAPI'
-
-export default class Home extends Component  {
-  
-  componentDidMount() {
-    getSpotifyToken()
-  }
-
-
-  render() {
+export const List = ({ token, navigation, data, title }) => {
     return (
-      <View styl={{ flex: 1 }}>
+      <View style={{ flex: 1, width: Dimensions.get('window').width}}>
         <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
-            <SafeAreaView style={{flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-              
+            <SafeAreaView style={{flex: 1, flexDirection: 'column'}}>
+              <View style={{marginTop: '5%', marginLeft: '2%'}}>
+                <Text style={{fontSize: 18}}>{title}</Text>
+              </View>
+              <View style={{padding: '5%', marginBottom: '5%'}}>
+                  <FlatList
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ alignItems: 'center' }}
+                    numColumns={2}
+                    data={data}
+                    keyExtractor={data => data.id}
+                    renderItem={(data) => 
+                      <TouchableOpacity onPress={() => navigation.navigate('Details', { id: data.item.id, user_token: token})}>
+                        <View style={{padding: 5, alignItems: 'center'}}>
+                          <Image style={{height: 160, width: 160 }} source={{ uri: data.item.images[0].url }} />
+                          <Text style={{marginTop: '1%', color: '#FFFFFF'}}>{data.item.name}</Text>
+                          <Text style={{fontSize: 10, color: '#FFFFFF'}}>{data.item.followers.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")} Followers</Text>
+                        </View>
+                      </TouchableOpacity>
+                    }
+                  />
+              </View>
             </SafeAreaView>
         </LinearGradient>
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
