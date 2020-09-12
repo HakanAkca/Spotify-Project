@@ -1,54 +1,42 @@
-import React, { Component } from 'react';
+import React, { Component, useContext, useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions, Alert } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-community/async-storage'
 import { LinearGradient } from 'expo-linear-gradient';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import { Icon } from 'react-native-elements'
+import moment from 'moment'
 
-import { getArtist, getArtistAlbums } from '../../services/spotifyAPI'
+import { getSpotifyToken, getArtist, getArtistAlbums, getUserTopArtists } from '../services/spotifyAPI'
+import { AuthContext } from '../services/AuthContext'
 
-export default class Details extends Component  {
+export default function DetailsList(data) {
 
-  constructor(props) {
-    super(props)
+  const { refreshToken } = useContext(AuthContext)
+  const [loading, setLoading] = useState(true)
+  const [artist, setArtist] = useState([]);
+  const [artistAlbums, setArtistAlbums] = useState([]);
 
-    this.state = {
-      artistId: props.route.params.id,
-      artist: [],
-      artistAlbums: []
+  useEffect(() => {
+    async function getTokenAndFetch() {
+      await AsyncStorage.multiGet(['token', 'refresh_token']).then(async res => {
+        const token = res[0][1]
+        const date = await AsyncStorage.getItem('date')
+
+        if (moment().locale('fr').diff(date, 'minutes') >= 45) {
+              refreshToken(res[1][1])
+              const new_token = await AsyncStorage.getItem('token')
+
+              getArtist(new_token, data.id).then(res => { this.setState({ artist: res })}).catch(res =>  console.log('erreur'))
+              getArtistAlbums(new_token, data.id).then(res => this.setState({ artistAlbums: res.items })).catch(res =>  console.log('erreur'))
+        } else {
+          getArtist(token, data.id).then(res => setArtist(res)).catch(() => console.log('erreur'))
+          getArtistAlbums(token, data.id).then(res => setArtistAlbums({ artistAlbums: res.items })).catch(res => console.log('erreur'))
+        }
+      }); 
     }
-  }
-
-  errorMessage = () => {
-    return (
-       Alert.alert(
-            "Erreur",
-            "Une erreur est survenu lors du chargement",
-            [ { text: "OK", onPress: () => this.props.navigation.goBack() } ],
-            { cancelable: false }
-          )
-    )
-  } 
-  
-  componentDidMount() {
-    const { artistId } = this.state
-
-    AsyncStorage.getItem('token').then(res => {
-      getArtist(res, artistId)
-        .then(res => { this.setState({ artist: res})})
-        .catch(res =>  this.errorMessage())
-
-      getArtistAlbums(res, artistId)
-        .then(res => this.setState({ artistAlbums: res.items}))
-        .catch(res =>  this.errorMessage())
-    })
-  }
-
-
-  render() {
-    const { artist, artistAlbums, user_token } = this.state
-    const { navigation } = this.props
+    getTokenAndFetch()
+    },[]);
 
     return (
         <View style={{flex: 1}}>
@@ -57,15 +45,15 @@ export default class Details extends Component  {
             minHeight={100}
             renderHeader={() => <Image source={{ uri: artist.images && artist.images[0].url }} style={styles.image} />}
             ScrollViewComponent={FlatList}
-            data={artistAlbums}
+            data={artistAlbums.artistAlbums}
             keyExtractor={(item) => item.id}
             scrollViewBackgroundColor={"#121212"}
             renderItem={(albums) => {
-              
+
               let date = new Date().getFullYear(albums.item.release_date)
 
               return (
-                <TouchableOpacity style={styles.itemView} onPress={() => navigation.navigate('Tracks', { id: albums.item.id, image: albums.item.images[0].url })}>
+                <TouchableOpacity style={styles.itemView} onPress={() => data.navigation.navigate('Tracks', { id: albums.item.id, image: albums.item.images[0].url })}>
                   <Image style={styles.itemImage} source={{ uri: albums.item.images[0].url }} />
                   <View style={{flexShrink: 1, marginLeft: '3%'}}>
                     <Text style={styles.itemText}>{albums.item.name}</Text>
@@ -77,7 +65,7 @@ export default class Details extends Component  {
             renderForeground={() => ( 
               <View style={styles.titleContainer}>
                 <View style={{marginTop: '5%'}}>
-                  <Icon onPress={() => navigation.goBack()} name="chevron-left" type="material-community" color="#FFFFFF" />
+                  <Icon onPress={() => data.navigation.goBack()} name="chevron-left" type="material-community" color="#FFFFFF" />
                 </View>
                 <View style={{marginBottom: '5%'}}>
                   <Text style={styles.imageTitle}>{artist.name}</Text>
@@ -87,7 +75,6 @@ export default class Details extends Component  {
           />
         </View>
     );
-  }
 }
 
 const styles = {

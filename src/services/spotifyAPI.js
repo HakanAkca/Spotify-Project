@@ -1,6 +1,7 @@
 import base64 from 'react-native-base64'
 import * as AuthSession from 'expo-auth-session'
 import AsyncStorage from '@react-native-community/async-storage'
+import * as Localization from 'expo-localization'
 
 const url = "https://accounts.spotify.com/api"
 const api_url = "https://api.spotify.com/v1"
@@ -48,6 +49,23 @@ export const getSpotifyToken = async (code) => {
 
 }  
 
+export const refreshToken = async (refresh_token) => {
+    
+    let redirectUrl = AuthSession.getRedirectUrl('redirect')
+    
+    const request = await fetch(`${url}/token`, { 
+        method: 'POST', 
+        headers: {
+            Authorization: `Basic ${base6Credentails}`,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `grant_type=refresh_token&refresh_token=${refresh_token}`
+    });
+
+    return await request.json()
+
+}  
+
 export const getUserTopArtists = async (token) => {   
     const request = await fetch(`${api_url}/me/top/artists`, { 
         method: 'GET', 
@@ -80,6 +98,26 @@ export const getArtistAlbums = async (token, id) => {
 
 export const getAlbumsTracks = async (token, id) => {   
     const request = await fetch(`${api_url}/albums/${id}/tracks`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}
+
+export const getNews = async (token) => {
+    const request = await fetch(`${api_url}/browse/new-releases?country=${Localization.locale.substring(0,2)}`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+    return await request.json()
+}
+
+export const featuredPlaylists = async (token) => {
+    const request = await fetch(`${api_url}/browse/featured-playlists?country=${Localization.locale.substring(0,2)}`, { 
         method: 'GET', 
         headers: {
             Authorization: `Bearer ${token}`,

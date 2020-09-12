@@ -9,18 +9,20 @@ import AsyncStorage from '@react-native-community/async-storage'
 import moment from 'moment'
 import 'moment/min/moment-with-locales'
 
+import { getAutorization, me, getSpotifyToken, refreshToken } from './src/services/spotifyAPI'
 import { AuthContext } from './src/services/AuthContext'
-import { SignIn } from './src/screens/auth/signIn'
-import { Settings } from './src/screens/board/settings'
-import { getAutorization, me, getSpotifyToken } from './src/services/spotifyAPI'
 
-import Home from './src/screens/board/home'
-import Details from './src/screens/board/details'
-import Tracks from './src/screens/board/albumsTracks'
+
+import Home from './src/screens/board/HomeScreen'
+import DetailsScreen from './src/screens/board/DetailsScreen'
+import TracksScreen from './src/screens/board/AlbumsTracksScreen'
+import SearchScreen from './src/screens/board/SearchScreen'
+
+import { SignIn } from './src/screens/auth/SignIn'
+import { Settings } from './src/screens/board/SettingsScreen'
 
 const AuthScreen = createStackNavigator();
 function AuthStack() {
-
     return (
         <AuthScreen.Navigator>
             <AuthScreen.Screen name="Login" component={SignIn} options={{ headerShown: false }} />
@@ -34,9 +36,19 @@ function HomeStackScreen() {
     return (
         <HomeScreen.Navigator>
             <HomeScreen.Screen name="Home" component={Home} options={{ headerShown: false }} />
-            <HomeScreen.Screen name="Details" component={Details} options={{ headerShown: false }} />
-            <HomeScreen.Screen name="Tracks" component={Tracks} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Tracks" component={TracksScreen} options={{ headerShown: false }} />
         </HomeScreen.Navigator>
+    )
+}
+
+
+const Search = createStackNavigator();
+function SearchStackScreen() {
+    return (
+        <Search.Navigator>
+            <Search.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
+        </Search.Navigator>
     )
 }
 
@@ -74,7 +86,7 @@ function TabsScreen() {
             />
             <Tab.Screen 
                 name="Recherche" 
-                component={HomeStackScreen} 
+                component={SearchStackScreen} 
                 options={{
                     tabBarIcon: ({ focused, color }) => {
                         return <Icon name={"search"} type={"material-comunity"} color={color} />;
@@ -117,24 +129,38 @@ export default function App({ navigation }) {
             isSignout: true,
             userToken: null,
           };
+        case 'REFRESH_TOKEN':
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+          };
       }
     },
     {
       isLoading: true,
       isSignout: false,
       userToken: null,
+      refresh_token: null
     }
   );
 
   React.useEffect(() => {
     const bootstrapAsync = async () => {
       let userToken;
+      const date = await AsyncStorage.getItem('date');
 
-      try {
-        userToken = await AsyncStorage.getItem('token');
-      } catch (e) {
-        // Restoring token failed
+      if (moment().locale('fr').diff(date, 'minutes') > 45) {
+          const date = await AsyncStorage.getItem('refresh_token').then(res => 
+            refreshToken(res).then(res => {
+              userToken = res.access_token
+              AsyncStorage.getItem('token', res.access_token)
+            }) 
+          );
+      } else {
+        userToken = AsyncStorage.getItem('token')
       }
+
       dispatch({ type: 'RESTORE_TOKEN', token: userToken });
     };
 
@@ -143,16 +169,15 @@ export default function App({ navigation }) {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async data => {
+      signIn: async () => {
          getAutorization().then(res => {
             if (res.type !== "success") { 
                 console.log('nani')
             } else {
                 getSpotifyToken(res.params.code).then(res => {
-                    console.log(res)
                     const token = res.access_token
                     const refresh_token = res.refresh_token
-                    const date = moment(new Date()).locale('fr').toString()
+                    const date = moment().locale('fr').toString()
 
                     AsyncStorage.multiSet([['token', token], ['date', date], ['refresh_token', refresh_token]]);
                     dispatch({ type: 'SIGN_IN', token: token });
@@ -160,10 +185,13 @@ export default function App({ navigation }) {
             }
         })
       },
-      signOut: () => dispatch({ type: 'SIGN_OUT' }),
-    }),
-    []
-  );
+      signOut: () => { 
+        AsyncStorage.multiRemove(['token', 'date', 'refresh_token'])
+        dispatch({ type: 'SIGN_OUT' }) 
+      },
+      refreshToken: (res) => { 
+        refreshToken(res).then(async res => await AsyncStorage.setItem('token', res.access_token))}
+    }),[]);
 
   const Stack = createStackNavigator()
 
