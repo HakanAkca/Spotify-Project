@@ -23,10 +23,10 @@
 $ npm install -g expo-cli
 ```
 
-> at the root of the project use yarn to install external libs
-
+> at the root of the project use yarn to install external libs and run simulator
+ 
 ```shell
-$ yarn
+$ yarn & yarn ios / yarn android
 ```
 
 - If you don't want use emulator you can donwload on IOS/Android app EXPO in store to run Spotify-Project with this link : <a href="https://expo.io/@hakanakca" target="_blank">`@hakanakca`</a>
