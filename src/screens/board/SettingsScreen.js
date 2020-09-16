@@ -13,7 +13,7 @@ export const Settings = ({ navigation }) =>  {
   return (
     <View styl={{ flex: 1 }}>
       <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
-        <SafeAreaView style={{flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+        <SafeAreaView style={{flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => signOut()}>
                 <Text style={{fontSize: 14, color: '#FFFFFF'}}>SE DECONNECTER</Text>
             </TouchableOpacity>

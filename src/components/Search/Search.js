@@ -26,10 +26,11 @@ export default class Seacrh extends Component {
 
     return (
       <View style={styles.container}>
+        <Text style={{fontSize: 18, fontFamily: 'Inter_900Black', color: '#FFFFFF'}}>Rechercher</Text>
         <TextInput
           style={styles.input}
           value={text}
-          placeholder="Search here..."
+          placeholder="Artists, titres ou podcasts."
           underlineColorAndroid="transparent"
           onChangeText={newText => this.handleChangeText(newText)}
         />
@@ -39,17 +40,22 @@ export default class Seacrh extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    margin: 10
+  },
   text: {
     marginTop: 10,
     marginBottom: 10
   },
   input: {
+    marginTop: 10,
     borderWidth: 1,
+    borderRadius: 0,
     borderColor: "green",
+    backgroundColor: '#FFFFFF',
     padding: 10,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     marginBottom: 10
   }
 });

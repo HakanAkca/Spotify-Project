@@ -50,7 +50,6 @@ export default class AlbumsTracks extends Component  {
     return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
   }
 
-
   render() {
 
     const { loading, tracks, track_image } = this.state

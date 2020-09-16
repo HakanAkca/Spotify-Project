@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,6 +8,8 @@ import { Icon } from 'react-native-elements'
 import AsyncStorage from '@react-native-community/async-storage'
 import moment from 'moment'
 import 'moment/min/moment-with-locales'
+moment.locale('fr-FR');
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 
 import { getAutorization, me, getSpotifyToken, refreshToken } from './src/services/spotifyAPI'
 import { AuthContext } from './src/services/AuthContext'
@@ -48,6 +50,8 @@ function SearchStackScreen() {
     return (
         <Search.Navigator>
             <Search.Screen name="Search" component={SearchScreen} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Details" component={DetailsScreen} options={{ headerShown: false }} />
+            <HomeScreen.Screen name="Tracks" component={TracksScreen} options={{ headerShown: false }} />
         </Search.Navigator>
     )
 }
@@ -94,7 +98,7 @@ function TabsScreen() {
                 }}
             />
             <Tab.Screen 
-                name="Bibliothèque" 
+                name="Paramètres" 
                 component={SettingsStackScreen} 
                 options={{
                     tabBarIcon: ({ focused, color }) => {
@@ -108,6 +112,9 @@ function TabsScreen() {
 
 
 export default function App({ navigation }) {
+
+  useFonts({Inter_900Black});
+
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
@@ -149,12 +156,20 @@ export default function App({ navigation }) {
     const bootstrapAsync = async () => {
       let userToken;
       const date = await AsyncStorage.getItem('date');
+      const token = await AsyncStorage.getItem('token')
 
-      if (moment().locale('fr').diff(date, 'minutes') > 45) {
+      console.log(moment().locale('fr').diff(date, 'minutes'))
+
+      if (token === null & date === null) {
+         dispatch({ type: 'SIGN_OUT', userToken: null});
+      }
+
+      if (moment().locale('fr').diff(date, 'minutes') > 1) {
           const date = await AsyncStorage.getItem('refresh_token').then(res => 
             refreshToken(res).then(res => {
+              console.log(res)
               userToken = res.access_token
-              AsyncStorage.getItem('token', res.access_token)
+              AsyncStorage.setItem('token', res.access_token)
             }) 
           );
       } else {
@@ -190,7 +205,10 @@ export default function App({ navigation }) {
         dispatch({ type: 'SIGN_OUT' }) 
       },
       refreshToken: (res) => { 
-        refreshToken(res).then(async res => await AsyncStorage.setItem('token', res.access_token))}
+        refreshToken(res).then(async res => {
+          console.log(res), 
+          await AsyncStorage.setItem('token', res.access_token)
+          })}
     }),[]);
 
   const Stack = createStackNavigator()
