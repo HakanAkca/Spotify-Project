@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ActivityIndicator, SafeAreaView } from "react-native";
+import { Text, View, ActivityIndicator, SafeAreaView, Dimensions} from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -69,7 +69,7 @@ export default class SearchScreen extends Component {
     const { navigation } = this.props
 
     return (
-       <LinearGradient colors={['#3f6b6b', '#121212']} style={{height: '100%'}}>
+       <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
         <SafeAreaView>
           <Search onChange={text => this.handleSearchChange(text)} text={query} />
           {isFetching && artists.length === 0 ? (
@@ -91,5 +91,9 @@ const styles = {
     justifyContent: "flex-start",
     margin: 10,
     marginTop: 50
+  },
+  header: {
+    height: '100%',
+    width: Dimensions.get('window').width
   }
 };

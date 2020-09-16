@@ -26,7 +26,7 @@ export default class Seacrh extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={{fontSize: 18, fontFamily: 'Inter_900Black', color: '#FFFFFF'}}>Rechercher</Text>
+        <Text style={styles.text}>Rechercher</Text>
         <TextInput
           style={styles.input}
           value={text}
@@ -44,6 +44,9 @@ const styles = {
     margin: 10
   },
   text: {
+    fontSize: 18, 
+    fontFamily: 'Inter_900Black', 
+    color: '#FFFFFF',
     marginTop: 10,
     marginBottom: 10
   },

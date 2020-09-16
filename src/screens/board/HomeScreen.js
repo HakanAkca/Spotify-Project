@@ -17,7 +17,7 @@ export default function Home({ navigation }) {
 
   const { refreshToken, signOut } = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
-  const [data, setData] = useState({ albums: null, artists: null });
+  const [data, setData] = useState({ artists: null, albums: null });
 
   useEffect( () => {
     async function getTopArtists() {
@@ -50,7 +50,7 @@ export default function Home({ navigation }) {
       <View style={{ flex: 1 }}>
       {
         loading ?
-          <LinearGradient colors={['#3f6b6b', '#121212']} style={{height: '100%', width: '100%'}}>
+          <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
             <ActivityIndicator size="large" color="#FFFFFF" />
           </LinearGradient>
         :
@@ -68,6 +68,8 @@ export default function Home({ navigation }) {
 const styles = {
   header: {
     height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width
+    width: Dimensions.get('window').width,
+    alignItems:'center',
+    justifyContent: 'center'
   }
 }

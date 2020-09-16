@@ -67,10 +67,10 @@ export default class AlbumsTracks extends Component  {
       <View style={{ flex: 1 }}>
         <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
             <SafeAreaView style={{flex: 1, flexDirection: 'column'}}>
-              <View style={{alignItems: 'flex-start', marginLeft: '5%', paddingTop: '5%'}}>
+              <View style={styles.back}>
                 <Icon onPress={() => navigation.goBack()} name="chevron-left" type="material-community" color="#FFFFFF" />
               </View>
-              <View style={{marginTop: '5%', alignItems: 'center'}}>
+              <View style={styles.image}>
                 <Image style={{height: 140, width: 140 }} source={{ uri: track_image }} />
               </View>
               <View style={{flex: 1, padding: '5%'}}>
@@ -80,11 +80,11 @@ export default class AlbumsTracks extends Component  {
                     keyExtractor={tracks => tracks.id}
                     renderItem={(tracks) => {  
                       return (
-                        <View  style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View  style={styles.itemContainer}>
                           <View style={{padding: 5, width: '90%'}}>
                             <TouchableOpacity onPress={() => navigation('Details', { id: tracks.item.id })}>
-                              <Text style={{ marginTop: '1%', color: '#FFFFFF', fontSize: 16}}>{tracks.item.name.substring(0, 35)}</Text>
-                              <Text style={{ marginTop: '1%', color: '#3f6b6b', fontSize: 10}}>{this.millisToMinutesAndSeconds(tracks.item.duration_ms)}</Text>
+                              <Text style={[styles.text, { fontSize: 16 }]}>{tracks.item.name.substring(0, 35)}</Text>
+                              <Text style={[styles.text, { fontSize: 10 }]}>{this.millisToMinutesAndSeconds(tracks.item.duration_ms)}</Text>
                             </TouchableOpacity>
                           </View>
                           <Icon name="dots-horizontal" type="material-community" color="#FFFFFF" />
@@ -105,5 +105,24 @@ const styles = {
   header: {
     height: '100%',
     width: '100%'
+  },
+  back: {
+    alignItems: 'flex-start', 
+    marginLeft: '5%', 
+    paddingTop: '5%'
+  },
+  image: {
+    marginTop: '5%', 
+    alignItems: 'center'
+  },
+  itemContainer: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+  },
+  text: {
+    marginTop: '1%',
+    color: '#FFFFFF', 
   }
+  
 };
