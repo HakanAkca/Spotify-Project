@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput } from "react-native";
 
 export default class Seacrh extends Component {
   constructor({ text }) {
@@ -26,10 +26,11 @@ export default class Seacrh extends Component {
 
     return (
       <View style={styles.container}>
+        <Text style={styles.text}>Rechercher</Text>
         <TextInput
           style={styles.input}
           value={text}
-          placeholder="Search here..."
+          placeholder="Artists, titres ou podcasts."
           underlineColorAndroid="transparent"
           onChangeText={newText => this.handleChangeText(newText)}
         />
@@ -38,18 +39,26 @@ export default class Seacrh extends Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {},
+const styles = {
+  container: {
+    margin: 10
+  },
   text: {
+    fontSize: 18, 
+    fontFamily: 'Inter_900Black', 
+    color: '#FFFFFF',
     marginTop: 10,
     marginBottom: 10
   },
   input: {
+    marginTop: 10,
     borderWidth: 1,
+    borderRadius: 0,
     borderColor: "green",
+    backgroundColor: '#FFFFFF',
     padding: 10,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 5,
     marginBottom: 10
   }
-});
+};

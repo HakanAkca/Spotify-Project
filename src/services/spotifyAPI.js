@@ -13,7 +13,7 @@ const base6Credentails = base64.encode(client_id + ':' + client_secret)
 export const getAutorization = async () => {
 
     let redirectUrl = AuthSession.getRedirectUrl('redirect')
-    let scopes = 'user-read-email user-library-read user-read-recently-played playlist-read-private user-top-read'
+    let scopes = 'user-read-email user-library-read user-read-recently-played playlist-read-private user-top-read user-read-private'
     let results = await AuthSession.startAsync({
         authUrl: `https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=${encodeURIComponent(redirectUrl)}&scope=${encodeURIComponent(scopes)}&response_type=code`});
 
@@ -117,11 +117,22 @@ export const getNews = async (token) => {
 }
 
 export const featuredPlaylists = async (token) => {
-    const request = await fetch(`${api_url}/browse/featured-playlists?country=${Localization.locale.substring(0,2)}`, { 
+    const request = await fetch(`${api_url}/browse/categories`, { 
         method: 'GET', 
         headers: {
             Authorization: `Bearer ${token}`,
         }
     });
+    return await request.json()
+}
+
+export const search = async ( offset, limit, q, token) => {
+    const request = await fetch(`${api_url}/search?type=artist&limit=${limit}&offset=${offset}&q=${encodeURIComponent(q)}`, { 
+        method: 'GET', 
+        headers: {
+            Authorization: `Bearer ${token}`,
+        }
+    });
+
     return await request.json()
 }
