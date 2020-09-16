@@ -1,6 +1,5 @@
 import React, { Component, useContext, useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions, Alert, ActivityIndicator } from 'react-native';
-import * as Animatable from 'react-native-animatable';
+import { View, ActivityIndicator, Dimensions, FlatList, Image, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 import { LinearGradient } from 'expo-linear-gradient';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
@@ -17,7 +16,6 @@ export default function DetailsList(props) {
   const { refreshToken } = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState({ artist: null, artistsAlbum: null });
-
 
   useEffect(() => {
     async function getTokenAndFetch() {

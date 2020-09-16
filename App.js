@@ -158,18 +158,13 @@ export default function App({ navigation }) {
       const date = await AsyncStorage.getItem('date');
       const token = await AsyncStorage.getItem('token')
 
-      console.log(moment().locale('fr').diff(date, 'minutes'))
-
       if (token === null & date === null) {
-         dispatch({ type: 'SIGN_OUT', userToken: null});
-      }
-
-      if (moment().locale('fr').diff(date, 'minutes') > 1) {
+         dispatch({ type: 'SIGN_OUT', userToken: null });
+      } else if (moment(new Date()).locale('fr').diff(date, 'minutes') > 30) {
           const date = await AsyncStorage.getItem('refresh_token').then(res => 
             refreshToken(res).then(res => {
-              console.log(res)
               userToken = res.access_token
-              AsyncStorage.setItem('token', res.access_token)
+              AsyncStorage.multiSet([['token', res.access_token], ['date', moment(new Date()).locale('fr').toString()]]);
             }) 
           );
       } else {
@@ -192,7 +187,7 @@ export default function App({ navigation }) {
                 getSpotifyToken(res.params.code).then(res => {
                     const token = res.access_token
                     const refresh_token = res.refresh_token
-                    const date = moment().locale('fr').toString()
+                    const date = moment(new Date).locale('fr').toString()
 
                     AsyncStorage.multiSet([['token', token], ['date', date], ['refresh_token', refresh_token]]);
                     dispatch({ type: 'SIGN_IN', token: token });
@@ -206,7 +201,6 @@ export default function App({ navigation }) {
       },
       refreshToken: (res) => { 
         refreshToken(res).then(async res => {
-          console.log(res), 
           await AsyncStorage.setItem('token', res.access_token)
           })}
     }),[]);

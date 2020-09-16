@@ -1,8 +1,6 @@
 import React, { Component, useContext } from 'react';
-import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions } from 'react-native';
+import { SafeAreaView, View, Text, Dimensions, TouchableOpacity} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, Icon } from 'react-native-elements'
-import * as Animatable from 'react-native-animatable'
 
 import { AuthContext } from '../../services/AuthContext'
 
@@ -25,7 +23,7 @@ export const Settings = ({ navigation }) =>  {
 
 const styles = {
   header: {
-    height: '100%',
-    width: '100%'
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width
   }
 };

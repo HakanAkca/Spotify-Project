@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, SafeAreaView } from "react-native";
+import { Text, View, ActivityIndicator, SafeAreaView } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage'
 

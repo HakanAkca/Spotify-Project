@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import { FlatList, View, Image, Text, TouchableOpacity, SafeAreaView, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements'
 import * as Animatable from 'react-native-animatable';
 import AsyncStorage from '@react-native-community/async-storage'

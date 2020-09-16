@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput } from "react-native";
 
 export default class Seacrh extends Component {
   constructor({ text }) {
@@ -39,7 +39,7 @@ export default class Seacrh extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = {
   container: {
     margin: 10
   },
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 10
   }
-});
+};

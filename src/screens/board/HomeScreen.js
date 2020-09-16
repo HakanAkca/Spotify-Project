@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, ScrollView, FlatList, View, Image, Text, TouchableOpacity, Animated, Easing, SafeAreaView, Dimensions, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Icon } from 'react-native-elements'
@@ -15,8 +15,7 @@ import { List } from '../../components/Home/List'
 
 export default function Home({ navigation }) {
 
-  const { refreshToken } = useContext(AuthContext)
-
+  const { refreshToken, signOut } = useContext(AuthContext)
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState({ albums: null, artists: null });
 
