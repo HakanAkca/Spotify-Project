@@ -1,4 +1,4 @@
-***INSERT GRAPHIC HERE (include hyperlink in image)***
+***I put two days, Thursday / Friday / Monday / Tuesday I took a morning***
 
 # Spotify-Project
 
