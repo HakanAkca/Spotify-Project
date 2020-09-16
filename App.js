@@ -20,7 +20,7 @@ import DetailsScreen from './src/screens/board/DetailsScreen'
 import TracksScreen from './src/screens/board/AlbumsTracksScreen'
 import SearchScreen from './src/screens/board/SearchScreen'
 
-import { SignIn } from './src/screens/auth/SignIn'
+import { SignIn } from './src/screens/auth/signIn'
 import { Settings } from './src/screens/board/SettingsScreen'
 
 const AuthScreen = createStackNavigator();

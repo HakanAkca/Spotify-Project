@@ -14,7 +14,7 @@ export const SignIn = ({ navigation }) =>  {
     <View styl={{ flex: 1 }}>
       <LinearGradient colors={['#3f6b6b', '#121212']} style={styles.header}>
         <SafeAreaView style={{flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-          <Animatable.View animation="pulse" easing="ease-out" iterationCount="infinite" style={styles.animableView}>
+          <Animatable.View animation="pulse" easing="ease-out" iterationCount="infinite" style={styles.animatableView}>
             <Image 
               source={require('../../../assets/common/logo.png')} 
               style={{
